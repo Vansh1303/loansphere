@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Financial Profile." />
+  <title>Financial profile — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <style>
+    .fp-form-wrap { max-width: 680px; }
+    .fp-section { margin-bottom: 24px; }
+    .financial-disclaimer {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: -4px 0 12px 0;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Financial profile</h1>
+
+      <div class="fp-form-wrap">
+        <form id="financialProfileForm" novalidate>
+
+          <!-- 1. Income & employment -->
+          <div class="fp-section">
+            <h2 class="ls-section-header">Income &amp; employment</h2>
+            <div class="ls-card">
+              <div class="ls-field" style="margin-bottom: 12px;">
+                <label class="ls-label" for="monthlyIncome">Gross monthly income (₹) <span class="req">*</span></label>
+                <input class="ls-input" id="monthlyIncome" type="number" step="any" min="0" placeholder="e.g. 50000" required />
+              </div>
+              <div class="ls-form-grid-2">
+                <div class="ls-field">
+                  <label class="ls-label" for="employmentType">Employment type <span class="req">*</span></label>
+                  <select class="ls-select" id="employmentType" required>
+                    <option value="">Select employment type</option>
+                    <option value="govt_salaried">Government Salaried</option>
+                    <option value="private_salaried">Private Salaried</option>
+                    <option value="self_employed">Self Employed</option>
+                    <option value="business">Business</option>
+                  </select>
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="employmentStartDate">Employment start date <span class="req">*</span></label>
+                  <input class="ls-input" id="employmentStartDate" type="date" required />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Existing obligations -->
+          <div class="fp-section">
+            <h2 class="ls-section-header">Existing obligations</h2>
+            <div class="ls-card">
+              <div class="ls-form-grid-2">
+                <div class="ls-field">
+                  <label class="ls-label" for="existingEmisMonthly">Current monthly EMIs (₹) <span class="optional">(optional)</span></label>
+                  <input class="ls-input" id="existingEmisMonthly" type="number" step="any" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="existingLoansCount">Active loans count <span class="optional">(optional)</span></label>
+                  <input class="ls-input" id="existingLoansCount" type="number" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="creditCardLimitTotal">Total credit card limit (₹) <span class="optional">(optional)</span></label>
+                  <input class="ls-input" id="creditCardLimitTotal" type="number" step="any" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="creditCardOutstandingTotal">Credit card balance outstanding (₹) <span class="optional">(optional)</span></label>
+                  <input class="ls-input" id="creditCardOutstandingTotal" type="number" step="any" min="0" placeholder="0" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Payment history -->
+          <div class="fp-section">
+            <h2 class="ls-section-header">Payment history</h2>
+            <p class="financial-disclaimer">
+              <i class="ti ti-info-circle"></i>
+              This information is self-declared. In a production system, this would be verified against credit bureau records (CIBIL/Experian).
+            </p>
+            <div class="ls-card">
+              <div class="ls-form-grid-2">
+                <div class="ls-field">
+                  <label class="ls-label" for="onTimePaymentsPct">On-time payments (%) <span class="optional">(last 24 months)</span></label>
+                  <input class="ls-input" id="onTimePaymentsPct" type="number" step="0.1" min="0" max="100" placeholder="100" value="100" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="missedPaymentsCount12m">Missed payments <span class="optional">(last 12 months)</span></label>
+                  <input class="ls-input" id="missedPaymentsCount12m" type="number" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="defaultsCount">Loan defaults count <span class="optional">(ever)</span></label>
+                  <input class="ls-input" id="defaultsCount" type="number" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="settlementsCount">Settled / written-off accounts</label>
+                  <input class="ls-input" id="settlementsCount" type="number" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="creditHistoryLengthYears">Credit history length <span class="optional">(years)</span></label>
+                  <input class="ls-input" id="creditHistoryLengthYears" type="number" step="0.1" min="0" placeholder="0" value="0" />
+                </div>
+                <div class="ls-field">
+                  <label class="ls-label" for="hardInquiries6m">Hard inquiries <span class="optional">(last 6 months)</span></label>
+                  <input class="ls-input" id="hardInquiries6m" type="number" min="0" placeholder="0" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit button -->
+          <div style="margin-top: 24px;">
+            <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="submitBtn">
+              <i class="ti ti-device-floppy" id="btnIcon"></i>
+              <span id="btnLabel">Save financial profile</span>
+            </button>
+          </div>
+
+          <div id="formStatus" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/financial-profile.js"></script>
+</body>
+</html>

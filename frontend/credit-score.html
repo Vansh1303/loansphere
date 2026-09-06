@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Creditworthiness Score." />
+  <title>Creditworthiness score — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <style>
+    .cs-wrap { max-width: 820px; }
+    .cs-card { margin-bottom: 24px; }
+    
+    /* Gating Alert Card */
+    .cs-gate-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 580px;
+      margin: 32px auto;
+    }
+    .cs-gate-card__icon {
+      font-size: 40px;
+      color: var(--text-warning);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .cs-gate-card__title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .cs-gate-card__desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    /* Score Header Section */
+    .cs-score-hero {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
+      align-items: center;
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .cs-score-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cs-score-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .cs-score-number {
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+    .cs-score-number--success { color: var(--text-success); }
+    .cs-score-number--warning { color: var(--text-warning); }
+    .cs-score-number--danger  { color: var(--text-danger); }
+
+    .cs-loan-context {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .cs-loan-context strong {
+      color: var(--text-primary);
+    }
+
+    /* Inline SVG Gauge Container */
+    .cs-gauge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .cs-gauge-svg {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      overflow: visible;
+    }
+    .cs-gauge-track {
+      stroke: var(--border);
+      stroke-width: 16;
+      stroke-linecap: round;
+      fill: none;
+    }
+    .cs-gauge-fill {
+      stroke-width: 16;
+      stroke-linecap: round;
+      fill: none;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cs-gauge-label {
+      font-size: 11px;
+      fill: var(--text-secondary);
+      font-weight: 500;
+    }
+    .cs-gauge-center-text {
+      font-size: 26px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+    .cs-gauge-center-sub {
+      font-size: 11px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Explanation Section */
+    .cs-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cs-explanation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cs-explanation-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .cs-explanation-bullet {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* Component Breakdown Table */
+    .cs-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-1);
+    }
+    .cs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .cs-table th {
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .cs-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .cs-table tr:last-child td {
+      border-bottom: none;
+    }
+    .cs-table .cs-col-num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .cs-table th.cs-col-num {
+      text-align: right;
+    }
+    .cs-table-weight-badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .cs-disclaimer {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    @media (max-width: 720px) {
+      .cs-score-hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .cs-score-row {
+        justify-content: center;
+      }
+      .cs-gauge-container {
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/credit-score" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Creditworthiness score</h1>
+      <p class="ls-page-desc" style="margin-top: -10px; margin-bottom: 20px; font-size: 14px; color: var(--text-secondary);">
+        Transparent, explainable 0–900 scoring calculated directly from your financial profile and loan obligations.
+      </p>
+
+      <!-- Loading State -->
+      <div id="loadingState" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+        <span class="ls-spinner" style="border-top-color: var(--accent); width: 24px; height: 24px; margin-bottom: 12px;"></span>
+        <p style="font-size: 14px;">Loading credit profile&hellip;</p>
+      </div>
+
+      <!-- State 0: Financial Profile Gating State -->
+      <div id="gateContainer" class="cs-gate-card" style="display: none;">
+        <i class="ti ti-alert-circle cs-gate-card__icon"></i>
+        <h2 class="cs-gate-card__title">Financial profile required</h2>
+        <p class="cs-gate-card__desc">
+          To calculate your LoanSphere Creditworthiness Score, you must first complete your financial profile with your income, employment details, and active loan obligations.
+        </p>
+        <a href="/financial-profile" class="ls-btn ls-btn--primary">
+          <i class="ti ti-wallet"></i>
+          Complete financial profile
+        </a>
+      </div>
+
+      <div class="cs-wrap" id="mainContent" style="display: none;">
+
+        <!-- Global Status Messages -->
+        <div id="csAlert" style="margin-bottom: 16px;"></div>
+
+        <!-- State 1: Calculation Form -->
+        <div id="calcFormContainer" class="ls-card cs-card" style="display: none;">
+          <h2 class="cs-section-title">
+            <i class="ti ti-calculator" style="color: var(--accent);"></i>
+            Calculate creditworthiness score
+          </h2>
+          <form id="creditScoreForm" novalidate>
+            <div class="ls-form-grid-2">
+              <div class="ls-field">
+                <label class="ls-label" for="requestedLoanAmount">
+                  Requested loan amount (&#8377;)<span class="req">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="requestedLoanAmount"
+                  class="ls-input"
+                  placeholder="e.g. 500000"
+                  min="10000"
+                  step="1000"
+                  required
+                />
+              </div>
+
+              <div class="ls-field">
+                <label class="ls-label" for="requestedTenureMonths">
+                  Requested tenure (months)<span class="req">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="requestedTenureMonths"
+                  class="ls-input"
+                  placeholder="e.g. 60"
+                  min="6"
+                  max="360"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="ls-field" style="margin-top: 14px;">
+              <label class="ls-label" for="requestedLoanType">
+                Requested loan type<span class="req">*</span>
+              </label>
+              <select id="requestedLoanType" class="ls-select" required>
+                <option value="" disabled selected>Select loan type</option>
+                <option value="home">Home Loan (8.5% default rate)</option>
+                <option value="personal">Personal Loan (12.5% default rate)</option>
+                <option value="education">Education Loan (9.5% default rate)</option>
+                <option value="car">Car Loan (10.5% default rate)</option>
+              </select>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 10px; align-items: center;">
+              <button type="submit" class="ls-btn ls-btn--primary" id="calcSubmitBtn">
+                <span id="btnIcon"><i class="ti ti-sparkles"></i></span>
+                <span id="btnLabel">Calculate score</span>
+              </button>
+              <button type="button" class="ls-btn ls-btn--secondary" id="cancelRecalcBtn" style="display: none;">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- State 2: Score Display -->
+        <div id="scoreDisplayContainer" style="display: none;">
+
+          <!-- Score Hero Banner -->
+          <div class="cs-score-hero">
+            <div class="cs-score-meta">
+              <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 600;">
+                LoanSphere Creditworthiness Score
+              </div>
+              <div class="cs-score-row">
+                <span class="cs-score-number" id="displayScoreNumber">—</span>
+                <span class="ls-badge" id="displayBandBadge">Band</span>
+              </div>
+              <div class="cs-loan-context" id="displayLoanContext">
+                Evaluated for requested loan: <strong id="contextLoanType">—</strong> of <strong id="contextLoanAmount">&#8377;0</strong> for <strong id="contextLoanTenure">0 months</strong>.
+              </div>
+              <div style="margin-top: 8px;">
+                <button type="button" class="ls-btn ls-btn--secondary" id="recalcBtn">
+                  <i class="ti ti-refresh"></i>
+                  Recalculate with different terms
+                </button>
+              </div>
+            </div>
+
+            <!-- Plain Inline SVG Semi-Circular Gauge -->
+            <div class="cs-gauge-container">
+              <svg class="cs-gauge-svg" viewBox="0 0 260 150" aria-label="Score Gauge Visual">
+                <!-- Background track arc: radius 100, center (130, 130), from (30,130) to (230,130) -->
+                <path
+                  class="cs-gauge-track"
+                  d="M 30 130 A 100 100 0 0 1 230 130"
+                />
+                <!-- Filled arc (stroke-dasharray = pi * 100 ≈ 314.16) -->
+                <path
+                  id="gaugeFillArc"
+                  class="cs-gauge-fill"
+                  d="M 30 130 A 100 100 0 0 1 230 130"
+                  stroke="var(--text-success)"
+                  stroke-dasharray="314.16"
+                  stroke-dashoffset="314.16"
+                />
+                <!-- Center Score Text -->
+                <text
+                  id="gaugeCenterScore"
+                  class="cs-gauge-center-text"
+                  x="130"
+                  y="105"
+                  fill="var(--text-primary)"
+                >—</text>
+                <text
+                  id="gaugeCenterBand"
+                  class="cs-gauge-center-sub"
+                  x="130"
+                  y="124"
+                >SCORE</text>
+                <!-- Range Ticks / Labels -->
+                <text class="cs-gauge-label" x="25" y="145" text-anchor="middle">0</text>
+                <text class="cs-gauge-label" x="130" y="30" text-anchor="middle">450</text>
+                <text class="cs-gauge-label" x="235" y="145" text-anchor="middle">900</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Why this score Section -->
+          <div class="ls-card cs-card">
+            <h2 class="cs-section-title">
+              <i class="ti ti-info-circle" style="color: var(--accent);"></i>
+              Why this score
+            </h2>
+            <ul class="cs-explanation-list" id="explanationList">
+              <!-- Rendered dynamically -->
+            </ul>
+          </div>
+
+          <!-- Component Breakdown Table -->
+          <div class="ls-card cs-card">
+            <h2 class="cs-section-title">
+              <i class="ti ti-list-details" style="color: var(--accent);"></i>
+              Component breakdown
+            </h2>
+            <div class="cs-table-wrap">
+              <table class="cs-table" aria-label="Credit score component breakdown">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th class="cs-col-num">Raw Value</th>
+                    <th class="cs-col-num">Component Score</th>
+                    <th class="cs-col-num">Weight</th>
+                  </tr>
+                </thead>
+                <tbody id="componentTableBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+                <tfoot>
+                  <tr style="background: var(--surface-2); font-weight: 600;">
+                    <td>Total Contribution</td>
+                    <td class="cs-col-num">—</td>
+                    <td class="cs-col-num" id="totalWeightedScore">—</td>
+                    <td class="cs-col-num"><span class="cs-table-weight-badge">100%</span></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div class="cs-disclaimer">
+              <i class="ti ti-shield-check"></i>
+              <span>The LoanSphere Creditworthiness Score is a project-specific, deterministic evaluation based on your financial obligations and credit profile. It is not an official CIBIL score.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/credit-score.js"></script>
+</body>
+</html>

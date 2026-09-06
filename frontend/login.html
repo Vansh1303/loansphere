@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Log in to LoanSphere — AI-powered loan agreement platform." />
+  <title>Login — LoanSphere</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <style>
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 24px;
+      background: linear-gradient(135deg, #e8edf8 0%, #f0f2f8 100%);
+    }
+    .auth-card {
+      width: min(460px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-lg);
+      padding: 40px 36px;
+    }
+    .auth-logo {
+      font-size: 2rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .auth-title {
+      margin: 0 0 6px;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    .auth-subtitle {
+      margin: 0 0 28px;
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      line-height: 1.6;
+    }
+    .auth-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-footer a:hover { text-decoration: underline; }
+    .auth-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card ls-fade-in">
+    <span class="auth-logo">⚖️</span>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in to your LoanSphere account to access all AI tools.</p>
+
+    <form id="loginForm" novalidate>
+      <div class="ls-field">
+        <label class="ls-label" for="email">Email address</label>
+        <input class="ls-input" id="email" name="email" type="email"
+               placeholder="you@example.com" autocomplete="email" required />
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-label" for="password">Password</label>
+        <input class="ls-input" id="password" name="password" type="password"
+               placeholder="Your password" autocomplete="current-password" required />
+      </div>
+
+      <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="loginBtn">
+        <span id="btnIcon">🔐</span>
+        <span id="btnLabel">Log In</span>
+      </button>
+
+      <div id="statusMsg" aria-live="polite" style="margin-top:14px;"></div>
+    </form>
+
+    <hr class="auth-divider" />
+
+    <p class="auth-footer">
+      Don't have an account? <a href="/register">Create one for free</a>
+    </p>
+  </div>
+
+  <script>
+    const form     = document.getElementById('loginForm');
+    const statusMsg = document.getElementById('statusMsg');
+    const btnIcon  = document.getElementById('btnIcon');
+    const btnLabel = document.getElementById('btnLabel');
+    const loginBtn = document.getElementById('loginBtn');
+
+    function setLoading(on) {
+      loginBtn.disabled = on;
+      btnIcon.innerHTML = on ? '<span class="ls-spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff;"></span>' : '🔐';
+      btnLabel.textContent = on ? 'Logging in…' : 'Log In';
+    }
+
+    function showStatus(type, msg) {
+      statusMsg.innerHTML = `<div class="ls-alert ls-alert--${type}">${msg}</div>`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusMsg.innerHTML = '';
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) { showStatus('error', '⚠️ Please fill in both fields.'); return; }
+
+      setLoading(true);
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showStatus('error', `❌ ${data.msg || 'Login failed. Please check your credentials.'}`);
+          return;
+        }
+        localStorage.setItem('access_token', data.access_token);
+        showStatus('success', '✅ Login successful! Redirecting…');
+        setTimeout(() => { window.location.href = '/'; }, 700);
+      } catch (err) {
+        showStatus('error', '❌ Unable to connect to the server. Please try again.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

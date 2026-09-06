@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Loan agreement generator." />
+  <title>Bank forms — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block, copy-pasted across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Loan agreement generator</h1>
+
+      <div class="ls-card">
+        <form id="generatorForm">
+
+          <!-- Loan parties -->
+          <div class="ls-form-section">
+            <h2 class="ls-section-header">Loan parties</h2>
+            <div class="ls-form-grid-2">
+              <div class="ls-field">
+                <label class="ls-label" for="borrower_name">Borrower name<span class="req">*</span></label>
+                <input class="ls-input" id="borrower_name" name="borrower_name" type="text" required placeholder="e.g. Riya Sharma" />
+              </div>
+              <div class="ls-field">
+                <label class="ls-label" for="lender_name">Lender name<span class="req">*</span></label>
+                <input class="ls-input" id="lender_name" name="lender_name" type="text" required placeholder="e.g. SBI Bank" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan terms -->
+          <div class="ls-form-section">
+            <h2 class="ls-section-header">Loan terms</h2>
+            <div class="ls-form-grid-2">
+              <div class="ls-field">
+                <label class="ls-label" for="loan_amount">Loan amount (₹)<span class="req">*</span></label>
+                <input class="ls-input" id="loan_amount" name="loan_amount" type="number" step="0.01" min="0" required placeholder="500000" />
+              </div>
+              <div class="ls-field">
+                <label class="ls-label" for="interest_rate">Interest rate (%)<span class="req">*</span></label>
+                <input class="ls-input" id="interest_rate" name="interest_rate" type="number" step="0.01" min="0" required placeholder="8.5" />
+              </div>
+              <div class="ls-field">
+                <label class="ls-label" for="tenure_months">Tenure (months)<span class="req">*</span></label>
+                <input class="ls-input" id="tenure_months" name="tenure_months" type="number" min="1" required placeholder="60" />
+              </div>
+              <div class="ls-field">
+                <label class="ls-label" for="start_date">Start date<span class="req">*</span></label>
+                <input class="ls-input" id="start_date" name="start_date" type="date" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Legal details -->
+          <div class="ls-form-section">
+            <h2 class="ls-section-header">Legal details</h2>
+            <div class="ls-form-grid-2">
+              <div class="ls-field">
+                <label class="ls-label" for="collateral">Collateral<span class="optional">(optional)</span></label>
+                <input class="ls-input" id="collateral" name="collateral" type="text" placeholder="e.g. 2016 Honda Activa" />
+              </div>
+              <div class="ls-field">
+                <label class="ls-label" for="governing_law">Governing law<span class="req">*</span></label>
+                <input class="ls-input" id="governing_law" name="governing_law" type="text" required placeholder="Indian Contract Act, 1872" />
+              </div>
+            </div>
+            <div class="ls-field" style="margin-top:12px;">
+              <label class="ls-label" for="penalty_clause">Penalty clause<span class="optional">(optional)</span></label>
+              <textarea class="ls-textarea" id="penalty_clause" name="penalty_clause" placeholder="Describe the penalty for default" rows="3"></textarea>
+            </div>
+          </div>
+
+          <button class="ls-btn ls-btn--primary ls-btn--full" id="generateBtn" type="button">
+            <i class="ti ti-file-text"></i>
+            Generate agreement
+          </button>
+          <div id="statusMessage" aria-live="polite" style="margin-top:12px;"></div>
+        </form>
+      </div>
+
+      <!-- Result -->
+      <div id="resultContainer" class="ls-card ls-fade-in" style="display:none; margin-top:16px;">
+        <h2 class="ls-section-header">Generated document</h2>
+        <a id="downloadLink" href="#" target="_blank" rel="noopener" class="ls-btn ls-btn--secondary">
+          <i class="ti ti-download"></i>
+          Download DOCX
+        </a>
+        <div id="previewContainer" style="margin-top:12px; font-size:14px; color:var(--text-secondary); line-height:1.6;"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/generator.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Document chatbot." />
+  <title>Document chatbot — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block, copy-pasted across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Document chatbot</h1>
+
+      <div class="chat-layout">
+        <!-- Upload panel -->
+        <aside>
+          <div class="ls-card">
+            <h2 class="ls-section-header">Upload document</h2>
+            <div class="ls-upload-zone" id="uploadZone">
+              <i class="ti ti-upload ls-upload-zone__icon"></i>
+              <div class="ls-upload-zone__title" id="uploadTitle">Drop your file here</div>
+              <div class="ls-upload-zone__hint">or click to browse</div>
+              <div class="ls-upload-zone__accepted">PDF · DOCX accepted</div>
+              <input type="file" id="fileInput" accept=".pdf,.doc,.docx" aria-label="Upload loan document" />
+            </div>
+            <div id="docInfo" style="display:none;" class="doc-info">
+              <i class="ti ti-check" style="color:var(--text-success); font-size:16px; flex-shrink:0;"></i>
+              <div>
+                <div class="doc-info__name" id="docName">—</div>
+                <div class="doc-info__sub">Session active · Ready to chat</div>
+              </div>
+            </div>
+            <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
+          </div>
+
+          <div class="ls-card" id="promptCard" style="display:none; margin-top:16px;">
+            <h2 class="ls-section-header">Try asking</h2>
+            <div class="suggested-prompts">
+              <button class="prompt-chip" onclick="usePrompt(this)">What is the interest rate?</button>
+              <button class="prompt-chip" onclick="usePrompt(this)">What are the repayment terms?</button>
+              <button class="prompt-chip" onclick="usePrompt(this)">Is there a prepayment penalty?</button>
+              <button class="prompt-chip" onclick="usePrompt(this)">What collateral is required?</button>
+              <button class="prompt-chip" onclick="usePrompt(this)">Which law governs this agreement?</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Chat window -->
+        <section class="chat-panel" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="chat-window">
+            <div class="chat-window__header">
+              <div class="chat-window__avatar">
+                <i class="ti ti-message-circle" style="font-size:16px;"></i>
+              </div>
+              <div>
+                <div class="chat-window__title">LoanSphere AI</div>
+                <div class="chat-window__subtitle">Clause-aware document assistant</div>
+              </div>
+              <div class="chat-window__status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusLabel">Idle</span>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-empty" id="chatEmpty">
+                <i class="ti ti-message-circle chat-empty__icon"></i>
+                <div class="chat-empty__text">Upload a document on the left to begin chatting with the AI about your loan agreement.</div>
+              </div>
+            </div>
+
+            <div class="chat-input-bar">
+              <textarea id="chatInput" class="chat-input" placeholder="Upload a document to start chatting…" rows="1" disabled aria-label="Chat message input"></textarea>
+              <button class="send-btn" id="sendBtn" disabled title="Send message" aria-label="Send">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="upload-hint" id="uploadHint">Upload a document to enable the chat</p>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/chatbot.js"></script>
+</body>
+</html>

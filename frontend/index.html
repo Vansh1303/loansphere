@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — AI-powered loan agreement platform." />
+  <title>Dashboard — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block, copy-pasted across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/credit-score" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Dashboard</h1>
+
+      <!-- Metric cards -->
+      <div class="ls-metric-grid">
+        <div class="ls-metric-card">
+          <p class="ls-metric-card__label">KYC status</p>
+          <p class="ls-metric-card__value ls-metric-card__value--warning" id="kycStatus">Pending</p>
+        </div>
+        <div class="ls-metric-card">
+          <p class="ls-metric-card__label">Credit score</p>
+          <p class="ls-metric-card__value" id="dashCreditScore">—</p>
+        </div>
+        <div class="ls-metric-card">
+          <p class="ls-metric-card__label">Documents uploaded</p>
+          <p class="ls-metric-card__value" id="docCount">0</p>
+        </div>
+        <div class="ls-metric-card">
+          <p class="ls-metric-card__label">Signed in as</p>
+          <p class="ls-metric-card__value" id="dashUser" style="font-size:16px;">—</p>
+        </div>
+      </div>
+
+      <!-- Feature cards -->
+      <h2 class="ls-section-header">Tools</h2>
+      <div class="ls-feature-grid">
+
+        <a href="/summarizer" class="ls-feature-card ls-feature-card--featured">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-file-search ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Document summarizer</p>
+            <p class="ls-feature-card__desc">Upload a loan agreement PDF or DOCX and get an AI-powered summary of key terms in seconds.</p>
+          </div>
+        </a>
+
+        <a href="/extractor" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-tags ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Clause extractor</p>
+            <p class="ls-feature-card__desc">NLP extraction of interest, repayment, penalty, collateral, and more — with confidence scores.</p>
+          </div>
+        </a>
+
+        <a href="/chatbot" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-message-circle ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Document chatbot</p>
+            <p class="ls-feature-card__desc">Ask plain-English questions about any uploaded document. Powered by LangChain RAG and Mistral-7B.</p>
+          </div>
+        </a>
+
+        <a href="/generator" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-building-bank ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Bank forms</p>
+            <p class="ls-feature-card__desc">Fill a form and instantly produce a legally structured DOCX loan agreement.</p>
+          </div>
+        </a>
+
+        <a href="/kyc" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-shield-check ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">KYC verification</p>
+            <p class="ls-feature-card__desc">Submit identity documents for automated KYC review and status tracking.</p>
+          </div>
+        </a>
+
+        <a href="/financial-profile" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-wallet ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Financial profile</p>
+            <p class="ls-feature-card__desc">Manage your income, ongoing loan obligations, and payment history for credit evaluation.</p>
+          </div>
+        </a>
+
+        <a href="/credit-score" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-chart-bar ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Credit score</p>
+            <p class="ls-feature-card__desc">Generate a credit score report based on your financial profile and loan history.</p>
+          </div>
+        </a>
+
+        <a href="#" class="ls-feature-card">
+          <div class="ls-feature-card__icon-wrap">
+            <i class="ti ti-scale ls-feature-card__icon"></i>
+          </div>
+          <div class="ls-feature-card__body">
+            <p class="ls-feature-card__title">Loan advisor</p>
+            <p class="ls-feature-card__desc">Get a personalized loan recommendation based on your income, FOIR, and credit profile.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const sub = payload.sub || payload.identity || '';
+      const el = document.getElementById('dashUser');
+      if (el) el.textContent = sub ? sub.slice(0, 16) : 'Logged in';
+    } catch (e) { /* ignore parse errors */ }
+  });
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+    try {
+      const res = await fetch('/api/kyc/status', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const el = document.getElementById('kycStatus');
+      if (!el) return;
+      const status = data.kyc_status || 'not_started';
+      const map = {
+        'verified':    { text: 'Verified',    cls: 'ls-metric-card__value--success' },
+        'pending':     { text: 'Pending',     cls: 'ls-metric-card__value--warning' },
+        'rejected':    { text: 'Rejected',    cls: 'ls-metric-card__value--danger' },
+        'not_started': { text: 'Not started', cls: 'ls-metric-card__value--warning' }
+      };
+      const info = map[status] || map['not_started'];
+      el.textContent = info.text;
+      el.className = 'ls-metric-card__value ' + info.cls;
+    } catch (e) { /* ignore */ }
+  });
+</script>
+</body>
+</html>

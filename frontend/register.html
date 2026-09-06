@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create a free LoanSphere account — AI-powered loan agreement platform." />
+  <title>Create Account — LoanSphere</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <style>
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 24px;
+      background: linear-gradient(135deg, #e8edf8 0%, #f0f2f8 100%);
+    }
+    .auth-card {
+      width: min(460px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-lg);
+      padding: 40px 36px;
+    }
+    .auth-logo {
+      font-size: 2rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .auth-title {
+      margin: 0 0 6px;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    .auth-subtitle {
+      margin: 0 0 28px;
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      line-height: 1.6;
+    }
+    .auth-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-footer a:hover { text-decoration: underline; }
+    .auth-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+    .password-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card ls-fade-in">
+    <span class="auth-logo">⚖️</span>
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Sign up for free to start generating, summarizing, and analyzing loan agreements with AI.</p>
+
+    <form id="registerForm" novalidate>
+      <div class="ls-field">
+        <label class="ls-label" for="full_name">Full Name</label>
+        <input class="ls-input" id="full_name" name="full_name" type="text"
+               placeholder="Your legal full name" autocomplete="name" required />
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-label" for="email">Email address</label>
+        <input class="ls-input" id="email" name="email" type="email"
+               placeholder="you@example.com" autocomplete="email" required />
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-label" for="password">Password</label>
+        <input class="ls-input" id="password" name="password" type="password"
+               placeholder="Create a strong password" autocomplete="new-password" required minlength="6" />
+        <div class="password-hint">Minimum 6 characters</div>
+      </div>
+
+      <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="registerBtn">
+        <span id="btnIcon">🚀</span>
+        <span id="btnLabel">Create Account</span>
+      </button>
+
+      <div id="statusMsg" aria-live="polite" style="margin-top:14px;"></div>
+    </form>
+
+    <hr class="auth-divider" />
+
+    <p class="auth-footer">
+      Already have an account? <a href="/login">Log in</a>
+    </p>
+  </div>
+
+  <script>
+    const form      = document.getElementById('registerForm');
+    const statusMsg = document.getElementById('statusMsg');
+    const btnIcon   = document.getElementById('btnIcon');
+    const btnLabel  = document.getElementById('btnLabel');
+    const registerBtn = document.getElementById('registerBtn');
+
+    function setLoading(on) {
+      registerBtn.disabled = on;
+      btnIcon.innerHTML = on ? '<span class="ls-spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff;"></span>' : '🚀';
+      btnLabel.textContent = on ? 'Creating account…' : 'Create Account';
+    }
+
+    function showStatus(type, msg) {
+      statusMsg.innerHTML = `<div class="ls-alert ls-alert--${type}">${msg}</div>`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusMsg.innerHTML = '';
+
+      const full_name = document.getElementById('full_name').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
+
+      if (!full_name || !email || !password) {
+        showStatus('error', '⚠️ Please fill in all fields.'); return;
+      }
+      if (password.length < 6) {
+        showStatus('error', '⚠️ Password must be at least 6 characters.'); return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ full_name, email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showStatus('error', `❌ ${data.msg || 'Registration failed. Please try again.'}`);
+          return;
+        }
+        showStatus('success', '✅ Account created! Redirecting to login…');
+        setTimeout(() => { window.location.href = '/login'; }, 900);
+      } catch (err) {
+        showStatus('error', '❌ Unable to connect to the server. Please try again.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

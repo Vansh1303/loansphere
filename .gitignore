@@ -1,0 +1,33 @@
+# Virtual environment
+ls/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables (NEVER commit secrets)
+.env
+
+# Uploads and generated files
+static/uploads/*
+static/generated/*
+!static/uploads/.gitkeep
+!static/generated/.gitkeep
+
+# FAISS indexes (can be large, regenerable)
+faiss_store/*
+!faiss_store/.gitkeep
+
+# ML model artifacts (optional - can be large)
+# app/models/*.pkl
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

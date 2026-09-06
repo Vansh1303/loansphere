@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Document summarizer." />
+  <title>Document summarizer — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+<div class="ls-shell">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SIDEBAR — identical block, copy-pasted across all pages.
+       Active nav state is set by main.js via pathname.
+       ═══════════════════════════════════════════════════════ -->
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+
+      <div class="ls-nav-item">
+        <a href="/" class="ls-nav-item__btn" data-nav="dashboard">
+          <i class="ti ti-home"></i>
+          Dashboard
+        </a>
+      </div>
+
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()">
+          <i class="ti ti-file-text"></i>
+          Loan tools
+          <i class="ti ti-chevron-right ls-nav-chevron"></i>
+        </button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer">
+            <i class="ti ti-file-search"></i>
+            Summarizer
+          </a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor">
+            <i class="ti ti-tags"></i>
+            Extractor
+          </a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot">
+            <i class="ti ti-message-circle"></i>
+            Chatbot
+          </a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator">
+            <i class="ti ti-building-bank"></i>
+            Bank forms
+          </a>
+        </div>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/kyc" class="ls-nav-item__btn" data-nav="kyc">
+          <i class="ti ti-shield-check"></i>
+          KYC
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile">
+          <i class="ti ti-wallet"></i>
+          Financial profile
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="credit-score">
+          <i class="ti ti-chart-bar"></i>
+          Credit score
+        </a>
+      </div>
+
+      <div class="ls-nav-item">
+        <a href="#" class="ls-nav-item__btn" data-nav="loan-advisor">
+          <i class="ti ti-scale"></i>
+          Loan advisor
+        </a>
+      </div>
+
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom">
+      <div class="ls-nav-item">
+        <button class="ls-nav-item__btn" onclick="logout()">
+          <i class="ti ti-user"></i>
+          Profile
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <main class="ls-main">
+    <div class="ls-container">
+      <h1 class="ls-page-title">Document summarizer</h1>
+
+      <div class="ls-card">
+        <!-- Summary depth toggle -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <span style="font-size:13px; color:var(--text-secondary);">Summary depth</span>
+          <div class="ls-toggle" id="modeToggle" role="group" aria-label="Summary mode">
+            <button class="ls-toggle__btn ls-toggle__btn--active" id="btnBrief" data-mode="brief">Brief</button>
+            <button class="ls-toggle__btn" id="btnDetailed" data-mode="detailed">Detailed</button>
+          </div>
+        </div>
+        <input type="hidden" id="summaryMode" value="brief" />
+
+        <!-- Upload zone -->
+        <div class="ls-upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".pdf,.docx" aria-label="Upload loan agreement document" />
+          <i class="ti ti-upload ls-upload-zone__icon"></i>
+          <div class="ls-upload-zone__title" id="uploadTitle">Drag and drop or click to upload</div>
+          <div class="ls-upload-zone__hint">Your loan agreement PDF or DOCX</div>
+          <div class="ls-upload-zone__accepted">Supported formats: PDF, DOCX &nbsp;·&nbsp; Max 10 MB</div>
+        </div>
+
+        <!-- Submit -->
+        <div style="margin-top:16px;">
+          <button class="ls-btn ls-btn--primary ls-btn--full" id="summarizeBtn" disabled>
+            <i class="ti ti-file-search" id="btnIcon"></i>
+            <span id="btnLabel">Summarize document</span>
+          </button>
+        </div>
+
+        <div id="statusMsg" aria-live="polite"></div>
+      </div>
+
+      <!-- Results -->
+      <section id="resultsSection" style="display:none;" aria-label="Summary results">
+        <div class="ls-card ls-fade-in" style="margin-top:16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+            <h2 class="ls-section-header" style="margin:0;">Key term summary</h2>
+            <span style="font-size:12px; color:var(--text-secondary); font-family:monospace;" id="docIdBadge"></span>
+          </div>
+          <div class="ls-cards-grid" id="cardsGrid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/summarizer.js"></script>
+</body>
+</html>
