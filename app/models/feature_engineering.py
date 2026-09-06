@@ -160,6 +160,7 @@ def compute_feature_set(raw_inputs: Dict[str, Any]) -> Dict[str, Any]:
         "new_emi": new_emi,
         "credit_history_length_years": float(raw_inputs.get('credit_history_length_years', 0.0)),
         "age": int(raw_inputs['age']) if raw_inputs.get('age') is not None else None,
+        "monthly_income": float(raw_inputs['monthly_income']),
         "employment_type": raw_inputs['employment_type'],
         "requested_loan_type": raw_inputs['requested_loan_type'],
     }

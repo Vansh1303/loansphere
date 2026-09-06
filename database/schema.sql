@@ -120,3 +120,17 @@ CREATE TABLE IF NOT EXISTS credit_scores (
 );
 
 CREATE INDEX IF NOT EXISTS idx_credit_scores_user_id ON credit_scores(user_id);
+
+-- Machine-learning default risk assessments, linked to a scored application.
+CREATE TABLE IF NOT EXISTS risk_assessments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    credit_score_id UUID REFERENCES credit_scores(id),
+    default_risk_probability FLOAT,
+    risk_tier VARCHAR(20),
+    model_version VARCHAR(20) DEFAULT 'v1',
+    computed_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_user_id ON risk_assessments(user_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_credit_score_id ON risk_assessments(credit_score_id);
