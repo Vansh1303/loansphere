@@ -45,6 +45,7 @@ function initSidebar() {
         '/kyc':        'kyc',
         '/financial-profile': 'financial-profile',
         '/credit-score':      'credit-score',
+        '/loan-advisor':      'loan-advisor',
     };
     const activeKey = map[path] || '';
 
@@ -89,7 +90,7 @@ async function checkKycGate(e) {
         if (res.ok) {
             const data = await res.json();
             if (data.kyc_status === 'verified') {
-                alert('This feature is coming soon!');
+                window.location.href = '/loan-advisor';
                 return;
             }
         }

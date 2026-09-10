@@ -35,6 +35,7 @@ def create_app():
     from app.routes.financial_profile import financial_profile_bp
     from app.routes.credit_score import credit_score_bp
     from app.routes.risk_assessment import risk_assessment_bp
+    from app.routes.verdict import verdict_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(generate_bp, url_prefix='/api')
@@ -46,5 +47,6 @@ def create_app():
     app.register_blueprint(financial_profile_bp, url_prefix='/api')
     app.register_blueprint(credit_score_bp, url_prefix='/api')
     app.register_blueprint(risk_assessment_bp, url_prefix='/api')
+    app.register_blueprint(verdict_bp, url_prefix='/api')
     
     return app

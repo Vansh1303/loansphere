@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LoanSphere — Loan advisor." />
+  <title>Loan advisor — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <style>
+    .la-wrap { max-width: 880px; }
+    .la-form-card { max-width: 680px; }
+    .la-verdict-hero { display: flex; align-items: center; gap: 16px; padding: 20px 24px; margin-bottom: 16px; }
+    .la-verdict-icon { font-size: 30px; }
+    .la-verdict-copy { flex: 1; }
+    .la-verdict-title { font-size: 20px; font-weight: 500; margin: 0 0 5px; color: var(--text-primary); }
+    .la-verdict-desc { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
+    .la-verdict-hero--success { background: var(--bg-success); border-color: var(--text-success); }
+    .la-verdict-hero--success .la-verdict-icon { color: var(--text-success); }
+    .la-verdict-hero--warning { background: var(--bg-warning); border-color: var(--text-warning); }
+    .la-verdict-hero--warning .la-verdict-icon { color: var(--text-warning); }
+    .la-verdict-hero--danger { background: var(--bg-danger); border-color: var(--text-danger); }
+    .la-verdict-hero--danger .la-verdict-icon { color: var(--text-danger); }
+    .la-stat-grid { grid-template-columns: repeat(3, 1fr); margin-bottom: 16px; }
+    .la-list { margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 13px; line-height: 1.6; }
+    .la-list li + li { margin-top: 8px; }
+    .la-bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .la-bank-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 16px; }
+    .la-bank-name { font-size: 15px; font-weight: 500; margin: 0 0 7px; color: var(--text-primary); }
+    .la-bank-limit { font-size: 13px; color: var(--text-secondary); margin: 0 0 14px; }
+    .la-supportive-message { color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin: 16px 0 0; }
+    @media (max-width: 640px) { .la-stat-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="ls-shell">
+  <aside class="ls-sidebar">
+    <a href="/" class="ls-sidebar__logo">LoanSphere</a>
+    <nav class="ls-sidebar__nav" aria-label="Main navigation">
+      <div class="ls-nav-item"><a href="/" class="ls-nav-item__btn" data-nav="dashboard"><i class="ti ti-home"></i>Dashboard</a></div>
+      <div class="ls-nav-item" id="navLoanTools">
+        <button class="ls-nav-item__btn" data-nav="loan-tools" onclick="toggleLoanTools()"><i class="ti ti-file-text"></i>Loan tools<i class="ti ti-chevron-right ls-nav-chevron"></i></button>
+        <div class="ls-nav-sub" id="loanToolsSub">
+          <a href="/summarizer" class="ls-nav-sub__link" data-nav="summarizer"><i class="ti ti-file-search"></i>Summarizer</a>
+          <a href="/extractor" class="ls-nav-sub__link" data-nav="extractor"><i class="ti ti-tags"></i>Extractor</a>
+          <a href="/chatbot" class="ls-nav-sub__link" data-nav="chatbot"><i class="ti ti-message-circle"></i>Chatbot</a>
+          <a href="/generator" class="ls-nav-sub__link" data-nav="generator"><i class="ti ti-building-bank"></i>Bank forms</a>
+        </div>
+      </div>
+      <div class="ls-nav-item"><a href="/kyc" class="ls-nav-item__btn" data-nav="kyc"><i class="ti ti-shield-check"></i>KYC</a></div>
+      <div class="ls-nav-item"><a href="/financial-profile" class="ls-nav-item__btn" data-nav="financial-profile"><i class="ti ti-wallet"></i>Financial profile</a></div>
+      <div class="ls-nav-item"><a href="/credit-score" class="ls-nav-item__btn" data-nav="credit-score"><i class="ti ti-chart-bar"></i>Credit score</a></div>
+      <div class="ls-nav-item"><a href="/loan-advisor" class="ls-nav-item__btn" data-nav="loan-advisor"><i class="ti ti-scale"></i>Loan advisor</a></div>
+    </nav>
+    <div class="ls-sidebar__spacer"></div>
+    <div class="ls-sidebar__bottom"><div class="ls-nav-item"><button class="ls-nav-item__btn" onclick="logout()"><i class="ti ti-user"></i>Profile</button></div></div>
+  </aside>
+
+  <main class="ls-main">
+    <div class="ls-container la-wrap">
+      <h1 class="ls-page-title">Loan advisor</h1>
+      <p class="ls-page-desc" style="margin-top:-10px; margin-bottom:20px; font-size:14px; color:var(--text-secondary);">Get a transparent recommendation based on your KYC, financial profile, creditworthiness score, and estimated default risk.</p>
+
+      <div id="loadingState" style="padding:40px; text-align:center; color:var(--text-secondary);"><span class="ls-spinner" style="border-top-color:var(--accent); width:24px; height:24px;"></span><p style="font-size:14px;">Checking eligibility&hellip;</p></div>
+      <div id="advisorAlert" aria-live="polite"></div>
+
+      <div id="advisorContent" style="display:none;">
+        <div id="requestView" class="ls-card la-form-card">
+          <h2 class="ls-section-header">Loan request</h2>
+          <form id="loanAdvisorForm" novalidate>
+            <div class="ls-form-grid-2">
+              <div class="ls-field"><label class="ls-label" for="requestedLoanAmount">Requested loan amount<span class="req">*</span></label><input class="ls-input" id="requestedLoanAmount" type="number" min="1" step="1" placeholder="e.g. 500000" required /></div>
+              <div class="ls-field"><label class="ls-label" for="requestedTenureMonths">Tenure in months<span class="req">*</span></label><input class="ls-input" id="requestedTenureMonths" type="number" min="1" max="360" step="1" placeholder="e.g. 60" required /></div>
+            </div>
+            <div class="ls-field" style="margin-top:16px;"><label class="ls-label" for="requestedLoanType">Loan type<span class="req">*</span></label><select class="ls-select" id="requestedLoanType" required><option value="">Select loan type</option><option value="home">Home loan</option><option value="personal">Personal loan</option><option value="education">Education loan</option><option value="car">Car loan</option></select></div>
+            <div style="margin-top:20px;"><button id="submitButton" type="submit" class="ls-btn ls-btn--primary"><i class="ti ti-scale"></i><span>Get loan verdict</span></button></div>
+          </form>
+        </div>
+
+        <div id="resultView" style="display:none;">
+          <div id="verdictHero" class="ls-card la-verdict-hero"><i id="verdictIcon" class="ti"></i><div class="la-verdict-copy"><h2 id="verdictTitle" class="la-verdict-title"></h2><p id="verdictDescription" class="la-verdict-desc"></p></div><span id="verdictBadge" class="ls-badge"></span></div>
+          <div class="ls-metric-grid la-stat-grid">
+            <div class="ls-metric-card"><p class="ls-metric-card__label">Creditworthiness score</p><p id="scoreValue" class="ls-metric-card__value">—</p><span id="scoreBand" class="ls-badge" style="width:max-content; margin-top:8px;"></span></div>
+            <div class="ls-metric-card"><p class="ls-metric-card__label">Estimated default risk</p><p id="riskValue" class="ls-metric-card__value">—</p><span id="riskTier" class="ls-badge" style="width:max-content; margin-top:8px;"></span></div>
+            <div class="ls-metric-card"><p class="ls-metric-card__label">FOIR</p><p id="foirValue" class="ls-metric-card__value">—</p><p style="font-size:12px; color:var(--text-secondary); margin:8px 0 0;">Fixed obligations to income ratio</p></div>
+          </div>
+          <section class="ls-card"><h2 class="ls-section-header"><i class="ti ti-info-circle" style="color:var(--accent);"></i> Why this verdict</h2><ul id="reasoningList" class="la-list"></ul></section>
+          <section id="suggestionsSection" class="ls-card" style="display:none;"><h2 class="ls-section-header"><i class="ti ti-bulb" style="color:var(--accent);"></i> How to improve</h2><ul id="suggestionsList" class="la-list"></ul></section>
+          <section id="banksSection" class="ls-card" style="display:none;"><h2 class="ls-section-header"><i class="ti ti-building-bank" style="color:var(--accent);"></i> Eligible banks</h2><div id="banksList" class="la-bank-grid"></div></section>
+          <p id="rejectedMessage" class="la-supportive-message" style="display:none;">You don't currently qualify based on the criteria above. Review the suggestions to improve your eligibility.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/loan-advisor.js"></script>
+</body>
+</html>

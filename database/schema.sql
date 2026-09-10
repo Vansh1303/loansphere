@@ -134,3 +134,21 @@ CREATE TABLE IF NOT EXISTS risk_assessments (
 
 CREATE INDEX IF NOT EXISTS idx_risk_assessments_user_id ON risk_assessments(user_id);
 CREATE INDEX IF NOT EXISTS idx_risk_assessments_credit_score_id ON risk_assessments(credit_score_id);
+
+-- Final rules-based loan verdicts and qualifying bank recommendations.
+CREATE TABLE IF NOT EXISTS verdicts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    credit_score_id UUID REFERENCES credit_scores(id),
+    risk_assessment_id UUID REFERENCES risk_assessments(id),
+    verdict VARCHAR(20),
+    reasoning JSONB,
+    suggested_adjustments JSONB,
+    eligible_banks JSONB,
+    requested_loan_amount FLOAT,
+    requested_tenure_months INT,
+    requested_loan_type VARCHAR(20),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_verdicts_user_id ON verdicts(user_id);

@@ -63,3 +63,8 @@ def financial_profile():
 def credit_score():
     return serve_frontend('credit-score.html')
 
+
+@index_bp.route('/loan-advisor')
+def loan_advisor():
+    return serve_frontend('loan-advisor.html')
+

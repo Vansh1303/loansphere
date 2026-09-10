@@ -5,6 +5,7 @@ Gated behind financial profile existing (not KYC).
 """
 
 from flask import Blueprint, request, jsonify
+# pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.feature_engineering import get_financial_profile, compute_feature_set
 from app.models.credit_score import (
