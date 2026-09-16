@@ -34,7 +34,7 @@ def age_from_date_of_birth(date_of_birth):
 
 def save_verdict(user_id, credit_score_id, risk_assessment_id, verdict, reasoning, suggestions,
                  eligible_banks, requested_amount, requested_tenure, requested_loan_type):
-    """Persist the complete, auditable assessment outcome."""
+    """Persist the complete, auditable assessment outcome. Returns the verdict id."""
     connection = get_connection()
     if not connection:
         raise RuntimeError('Database connection not available')
@@ -47,6 +47,7 @@ def save_verdict(user_id, credit_score_id, risk_assessment_id, verdict, reasonin
                     suggested_adjustments, eligible_banks, requested_loan_amount,
                     requested_tenure_months, requested_loan_type
                 ) VALUES (%s, %s, %s, %s, %s::jsonb, %s::jsonb, %s::jsonb, %s, %s, %s)
+                RETURNING id
                 ''',
                 (
                     user_id, credit_score_id, risk_assessment_id, verdict,
@@ -54,7 +55,9 @@ def save_verdict(user_id, credit_score_id, risk_assessment_id, verdict, reasonin
                     requested_amount, requested_tenure, requested_loan_type,
                 ),
             )
+            verdict_id = cursor.fetchone()[0]
         connection.commit()
+        return str(verdict_id)
     except Exception:
         connection.rollback()
         raise
@@ -171,11 +174,12 @@ def generate_verdict():
             )
 
         # 8. Persist the final outcome and return the complete decision context.
-        save_verdict(
+        verdict_id = save_verdict(
             user_id, saved_score['id'], saved_risk['id'], verdict, reasoning, suggestions,
             eligible_banks, requested_amount, requested_tenure, loan_type,
         )
         return jsonify({
+            'verdict_id': verdict_id,
             'verdict': verdict,
             'creditworthiness_score': score_result['score'],
             'score_band': score_result['band'],

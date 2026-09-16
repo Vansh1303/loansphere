@@ -25,6 +25,7 @@ def get_eligible_banks(loan_type, monthly_income, foir, age, credit_score, emplo
         eligible.append({
             "bank_name": bank['bank_name'],
             "max_eligible_amount": bank['max_loan_amount'][loan_type],
+            "blank_form_url": bank.get('blank_form_url', '#'),
         })
 
     return eligible

@@ -11,6 +11,7 @@ BANK_CRITERIA = [
         "max_loan_amount": {"home": 7500000, "personal": 2000000, "education": 1500000, "car": 1000000},
         "min_credit_score": 650,
         "eligible_employment_types": ["govt_salaried", "private_salaried", "self_employed", "business"],
+        "blank_form_url": "https://sbi.co.in/documents/16012/1400784/180620-Home+loan+application+form.pdf",
     },
     {
         "bank_name": "HDFC Bank",
@@ -22,6 +23,7 @@ BANK_CRITERIA = [
         "max_loan_amount": {"home": 10000000, "personal": 4000000, "car": 1500000},
         "min_credit_score": 700,
         "eligible_employment_types": ["private_salaried", "self_employed", "business"],
+        "blank_form_url": "#",
     },
     {
         "bank_name": "ICICI Bank",
@@ -33,6 +35,7 @@ BANK_CRITERIA = [
         "max_loan_amount": {"home": 10000000, "personal": 3000000, "education": 2000000, "car": 1200000},
         "min_credit_score": 680,
         "eligible_employment_types": ["govt_salaried", "private_salaried", "business"],
+        "blank_form_url": "#",
     },
     {
         "bank_name": "Bank of Baroda",
@@ -44,6 +47,7 @@ BANK_CRITERIA = [
         "max_loan_amount": {"home": 5000000, "personal": 1500000, "education": 2000000},
         "min_credit_score": 600,
         "eligible_employment_types": ["govt_salaried", "private_salaried", "self_employed", "business"],
+        "blank_form_url": "#",
     },
     {
         "bank_name": "Axis Bank",
@@ -55,5 +59,6 @@ BANK_CRITERIA = [
         "max_loan_amount": {"home": 8000000, "personal": 2500000, "car": 1000000},
         "min_credit_score": 680,
         "eligible_employment_types": ["private_salaried", "business"],
+        "blank_form_url": "#",
     },
 ]

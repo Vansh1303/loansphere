@@ -1,4 +1,5 @@
-/* Loan advisor UI: KYC-gated verdict requests and explainable result rendering. */
+/* Loan advisor UI: KYC-gated verdict requests, explainable result rendering,
+   and bank form auto-fill generation. */
 (function () {
   const token = () => localStorage.getItem('access_token');
   const form = document.getElementById('loanAdvisorForm');
@@ -7,6 +8,11 @@
   const loanType = document.getElementById('requestedLoanType');
   const submitButton = document.getElementById('submitButton');
   const alertBox = document.getElementById('advisorAlert');
+
+  // Cached after verdict is generated
+  let currentVerdictId = null;
+  let currentLoanType = null;
+  let availableTemplates = [];
 
   function redirect(path, message) {
     window.location.href = path + '?msg=' + encodeURIComponent(message);
@@ -38,32 +44,140 @@
     });
   }
 
+  // ── Form template availability ────────────────────────────────────
+
+  async function fetchAvailableTemplates() {
+    try {
+      const res = await fetch('/api/forms/available-templates', {
+        headers: { Authorization: 'Bearer ' + token() },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        availableTemplates = data.available || [];
+      }
+    } catch (_) {
+      availableTemplates = [];
+    }
+  }
+
+  function hasTemplate(bankName, lt) {
+    return availableTemplates.some(
+      t => t.bank_name === bankName && t.loan_type === lt
+    );
+  }
+
+  // ── Form generation ───────────────────────────────────────────────
+
+  async function generateForm(bankName, lt, actionsContainer) {
+    const btn = actionsContainer.querySelector('.ls-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="ls-spinner"></span><span>Generating…</span>';
+    }
+    try {
+      const res = await fetch('/api/forms/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token(),
+        },
+        body: JSON.stringify({
+          verdict_id: currentVerdictId,
+          bank_name: bankName,
+          loan_type: lt,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || 'Form generation failed.');
+
+      // Replace button with download link
+      actionsContainer.innerHTML = '';
+      const link = document.createElement('a');
+      link.href = data.download_url;
+      link.className = 'la-bank-download';
+      link.target = '_blank';
+      link.download = '';
+      link.innerHTML =
+        '<i class="ti ti-download"></i>' +
+        'Download pre-filled ' + bankName + ' ' + lt + ' application';
+      actionsContainer.appendChild(link);
+    } catch (err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-building-bank"></i><span>Generate pre-filled form</span>';
+      }
+      showAlert('error', err.message);
+    }
+  }
+
+  // ── Bank card rendering ───────────────────────────────────────────
+
   function renderBanks(banks) {
     const list = document.getElementById('banksList');
     list.innerHTML = '';
+    const lt = currentLoanType || '';
+
     banks.forEach(bank => {
       const card = document.createElement('article');
       card.className = 'la-bank-card';
+
       const name = document.createElement('h3');
       name.className = 'la-bank-name';
       name.textContent = bank.bank_name;
+
       const limit = document.createElement('p');
       limit.className = 'la-bank-limit';
       limit.textContent = `Maximum eligible amount: ${formatINR(bank.max_eligible_amount)}`;
-      const link = document.createElement('a');
-      link.href = '/generator';
-      link.className = 'ls-btn ls-btn--secondary';
-      link.textContent = 'Proceed with this bank';
-      card.append(name, limit, link);
+
+      const actions = document.createElement('div');
+      actions.className = 'la-bank-actions';
+
+      if (hasTemplate(bank.bank_name, lt)) {
+        // Template exists — show generate button
+        const btn = document.createElement('button');
+        btn.className = 'ls-btn ls-btn--primary';
+        btn.innerHTML = '<i class="ti ti-building-bank"></i><span>Generate pre-filled form</span>';
+        btn.addEventListener('click', () => generateForm(bank.bank_name, lt, actions));
+        actions.appendChild(btn);
+      } else if (bank.blank_form_url && bank.blank_form_url !== '') {
+        // Fallback: download blank official form
+        if (bank.blank_form_url === '#') {
+          const btn = document.createElement('button');
+          btn.className = 'ls-btn ls-btn--secondary';
+          btn.disabled = true;
+          btn.innerHTML = '<i class="ti ti-download"></i><span>Download blank form (link coming soon)</span>';
+          actions.appendChild(btn);
+        } else {
+          const link = document.createElement('a');
+          link.href = bank.blank_form_url;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.className = 'ls-btn ls-btn--secondary';
+          link.innerHTML = '<i class="ti ti-download"></i><span>Download blank application form</span>';
+          actions.appendChild(link);
+        }
+      }
+
+      if (actions.children.length > 0) {
+        card.append(name, limit, actions);
+      } else {
+        card.append(name, limit);
+      }
       list.appendChild(card);
     });
   }
 
+  // ── Verdict rendering ─────────────────────────────────────────────
+
   function renderVerdict(data) {
+    // Store verdict context for form generation
+    currentVerdictId = data.verdict_id || null;
+    currentLoanType = loanType.value || '';
+
     const styles = {
-      approved: { role: 'success', icon: 'ti-check', title: 'Approved', description: 'Your application meets LoanSphere’s automated business-rule criteria.' },
+      approved: { role: 'success', icon: 'ti-check', title: 'Approved', description: 'Your application meets LoanSphere's automated business-rule criteria.' },
       review: { role: 'warning', icon: 'ti-clock', title: 'Under review', description: 'Your application needs manual review before a lending decision.' },
-      rejected: { role: 'danger', icon: 'ti-x', title: 'Not eligible', description: 'Your current application does not meet LoanSphere’s automated business-rule criteria.' },
+      rejected: { role: 'danger', icon: 'ti-x', title: 'Not eligible', description: 'Your current application does not meet LoanSphere's automated business-rule criteria.' },
     };
     const state = styles[data.verdict] || styles.review;
     const hero = document.getElementById('verdictHero');
@@ -90,6 +204,8 @@
     document.getElementById('requestView').style.display = 'none';
     document.getElementById('resultView').style.display = 'block';
   }
+
+  // ── Form submission ───────────────────────────────────────────────
 
   async function submit(event) {
     event.preventDefault();
@@ -126,11 +242,17 @@
     }
   }
 
+  // ── Initialization ────────────────────────────────────────────────
+
   async function init() {
     if (!token()) { window.location.href = '/login'; return; }
     try {
-      const response = await fetch('/api/kyc/status', { headers: { Authorization: 'Bearer ' + token() } });
-      const data = response.ok ? await response.json() : {};
+      // Check KYC and fetch available templates in parallel
+      const [kycRes] = await Promise.all([
+        fetch('/api/kyc/status', { headers: { Authorization: 'Bearer ' + token() } }),
+        fetchAvailableTemplates(),
+      ]);
+      const data = kycRes.ok ? await kycRes.json() : {};
       if (data.kyc_status !== 'verified') {
         redirect('/kyc', 'Please complete KYC verification before accessing the loan advisor.');
         return;

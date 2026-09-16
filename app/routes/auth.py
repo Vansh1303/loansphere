@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+# pyrefly: ignore [missing-import]
 import bcrypt
 from flask_jwt_extended import create_access_token
 from app.db.db import get_connection, release_connection
@@ -6,6 +7,7 @@ import psycopg2
 
 auth_bp = Blueprint('auth', __name__)
 
+# Register route
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()

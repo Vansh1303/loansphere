@@ -1,5 +1,6 @@
 """ML default-risk model loading, inference, and persistence helpers."""
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -20,6 +21,7 @@ COLUMNS_PATH = MODEL_DIR / 'risk_model_columns.pkl'
 
 _model = None
 _columns = None
+logger = logging.getLogger(__name__)
 
 
 def build_model() -> Pipeline:
@@ -86,6 +88,9 @@ def predict_default_risk(feature_set: Dict[str, Any], creditworthiness_score: in
             row[column] = int(column == f"requested_loan_type_{feature_set['requested_loan_type']}")
 
     input_frame = pd.DataFrame([row]).reindex(columns=columns, fill_value=0)
+    feature_dict = input_frame.to_dict(orient='records')[0]
+    logger.debug('Risk model input feature dict: %s', feature_dict)
+    print(f'[DEBUG] Risk model input features: {feature_dict}')
     probability = float(model.predict_proba(input_frame)[0, 1])
     return {
         'default_risk_probability': round(probability, 4),
