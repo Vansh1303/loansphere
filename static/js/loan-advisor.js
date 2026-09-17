@@ -175,9 +175,9 @@
     currentLoanType = loanType.value || '';
 
     const styles = {
-      approved: { role: 'success', icon: 'ti-check', title: 'Approved', description: 'Your application meets LoanSphere's automated business-rule criteria.' },
+      approved: { role: 'success', icon: 'ti-check', title: 'Approved', description: 'Your application meets LoanSphere\'s automated business-rule criteria.' },
       review: { role: 'warning', icon: 'ti-clock', title: 'Under review', description: 'Your application needs manual review before a lending decision.' },
-      rejected: { role: 'danger', icon: 'ti-x', title: 'Not eligible', description: 'Your current application does not meet LoanSphere's automated business-rule criteria.' },
+      rejected: { role: 'danger', icon: 'ti-x', title: 'Not eligible', description: 'Your current application does not meet LoanSphere\'s automated business-rule criteria.' },
     };
     const state = styles[data.verdict] || styles.review;
     const hero = document.getElementById('verdictHero');

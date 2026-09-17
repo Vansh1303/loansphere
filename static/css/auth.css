@@ -1,0 +1,231 @@
+/* =============================================
+   LoanSphere — Auth pages (login / register)
+   Split layout: brand panel + form panel.
+   Depends on main.css for tokens and controls.
+   ============================================= */
+
+body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--surface-1);
+}
+
+/* ---------- Brand panel ---------- */
+.auth-brand {
+  position: relative;
+  overflow: hidden;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  color: #eaf0ff;
+  background:
+    radial-gradient(900px 520px at 12% 8%, rgba(96, 165, 250, .32), transparent 62%),
+    radial-gradient(760px 520px at 88% 96%, rgba(124, 58, 237, .30), transparent 60%),
+    linear-gradient(150deg, #0d1b3e 0%, #101c3a 45%, #0a1228 100%);
+}
+
+/* Faint grid so the panel does not read as a flat gradient */
+.auth-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 50% 42%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+
+.auth-brand > * { position: relative; z-index: 1; }
+
+.auth-brand__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #fff;
+  text-decoration: none;
+}
+.auth-brand__mark {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(140deg, #60a5fa, #2563eb);
+  font-size: 17px;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, .45);
+}
+
+.auth-brand__body { margin: auto 0; padding: 40px 0; max-width: 480px; }
+
+.auth-brand__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, .09);
+  border: 1px solid rgba(255, 255, 255, .16);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #cfe0ff;
+  margin-bottom: 22px;
+}
+
+.auth-brand__title {
+  margin: 0 0 16px;
+  font-size: 38px;
+  line-height: 1.16;
+  font-weight: 700;
+  letter-spacing: -1.1px;
+  color: #fff;
+}
+.auth-brand__title em {
+  font-style: normal;
+  background: linear-gradient(95deg, #7dd3fc, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.auth-brand__lede {
+  margin: 0 0 34px;
+  font-size: 15px;
+  line-height: 1.68;
+  color: rgba(226, 235, 255, .74);
+}
+
+.auth-features { display: grid; gap: 15px; margin: 0; padding: 0; list-style: none; }
+.auth-features li { display: flex; align-items: flex-start; gap: 12px; }
+.auth-features__icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, .09);
+  border: 1px solid rgba(255, 255, 255, .14);
+  color: #9ec5ff;
+  font-size: 16px;
+}
+.auth-features li > span:last-child { display: block; }
+.auth-features__title { display: block; font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.auth-features__desc  { display: block; font-size: 12.5px; color: rgba(226, 235, 255, .62); line-height: 1.55; }
+
+.auth-brand__footer {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  font-size: 12px;
+  color: rgba(226, 235, 255, .55);
+}
+.auth-brand__stat b {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Form panel ---------- */
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  background: var(--surface-1);
+}
+
+.auth-card {
+  width: min(400px, 100%);
+  animation: fadeInUp 420ms var(--ease) both;
+}
+
+.auth-card__title {
+  margin: 0 0 7px;
+  font-size: 25px;
+  font-weight: 650;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+}
+.auth-card__subtitle {
+  margin: 0 0 28px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* Password field with a reveal button */
+.auth-password { position: relative; }
+.auth-password .ls-input { padding-right: 42px; }
+.auth-password__reveal {
+  position: absolute;
+  right: 4px; top: 50%;
+  transform: translateY(-50%);
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: none; cursor: pointer;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-size: 17px;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.auth-password__reveal:hover { color: var(--text-primary); background: var(--surface-2); }
+
+.auth-card__footer {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.auth-card__footer a { color: var(--text-accent); font-weight: 600; text-decoration: none; }
+.auth-card__footer a:hover { text-decoration: underline; }
+
+.auth-legal {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Theme switch floating in the form panel corner */
+.auth-theme {
+  position: fixed;
+  top: 18px; right: 18px;
+  z-index: 10;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 17px;
+  box-shadow: var(--shadow-xs);
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.auth-theme:hover { color: var(--text-primary); border-color: var(--border-strong); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  body { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+  .auth-panel { padding: 40px 22px; min-height: 100vh; }
+  .auth-card__mobile-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 16px; color: var(--text-primary);
+    text-decoration: none; margin-bottom: 26px;
+  }
+}
+.auth-card__mobile-logo { display: none; }
+.auth-card__mobile-logo .ls-brand-mark { width: 30px; height: 30px; font-size: 16px; }

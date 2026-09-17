@@ -7,6 +7,13 @@
   <title>Dashboard — LoanSphere</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="/static/css/main.css" />
+  <script>
+    /* Apply the saved theme before first paint to avoid a flash. */
+    (function(){try{var t=localStorage.getItem('ls_theme');
+      if(t!=='dark'&&t!=='light'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+      document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%231d4ed8'/%3E%3Cpath%20d='M11%209v13h10'%20stroke='%23fff'%20stroke-width='2.6'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='21.5'%20cy='11'%20r='2.2'%20fill='%2393c5fd'/%3E%3C/svg%3E" />
 </head>
 <body>
 <div class="ls-shell">
@@ -95,25 +102,33 @@
 
   <main class="ls-main">
     <div class="ls-container">
-      <h1 class="ls-page-title">Dashboard</h1>
+      <h1 class="ls-page-title" id="dashGreeting">Dashboard</h1>
+      <p class="ls-page-subtitle">
+        Your loan workspace at a glance — verification status, credit standing, and every AI tool
+        in one place.
+      </p>
 
       <!-- Metric cards -->
       <div class="ls-metric-grid">
         <div class="ls-metric-card">
-          <p class="ls-metric-card__label">KYC status</p>
+          <p class="ls-metric-card__label"><i class="ti ti-shield-check"></i>KYC status</p>
           <p class="ls-metric-card__value ls-metric-card__value--warning" id="kycStatus">Pending</p>
+          <p class="ls-metric-card__hint">Required before loan advice</p>
         </div>
         <div class="ls-metric-card">
-          <p class="ls-metric-card__label">Credit score</p>
+          <p class="ls-metric-card__label"><i class="ti ti-chart-bar"></i>Credit score</p>
           <p class="ls-metric-card__value" id="dashCreditScore">—</p>
+          <p class="ls-metric-card__hint">Generated from your financial profile</p>
         </div>
         <div class="ls-metric-card">
-          <p class="ls-metric-card__label">Documents uploaded</p>
+          <p class="ls-metric-card__label"><i class="ti ti-files"></i>Documents uploaded</p>
           <p class="ls-metric-card__value" id="docCount">0</p>
+          <p class="ls-metric-card__hint">Agreements analysed so far</p>
         </div>
         <div class="ls-metric-card">
-          <p class="ls-metric-card__label">Signed in as</p>
+          <p class="ls-metric-card__label"><i class="ti ti-user-circle"></i>Signed in as</p>
           <p class="ls-metric-card__value" id="dashUser" style="font-size:16px;">—</p>
+          <p class="ls-metric-card__hint">Session active</p>
         </div>
       </div>
 
@@ -216,6 +231,15 @@
       const sub = payload.sub || payload.identity || '';
       const el = document.getElementById('dashUser');
       if (el) el.textContent = sub ? sub.slice(0, 16) : 'Logged in';
+
+      // Time-aware greeting in the page title
+      const greetEl = document.getElementById('dashGreeting');
+      if (greetEl && sub) {
+        const h = new Date().getHours();
+        const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        const name = sub.split('@')[0].replace(/[._-]+/g, ' ');
+        greetEl.textContent = part + ', ' + name.charAt(0).toUpperCase() + name.slice(1);
+      }
     } catch (e) { /* ignore parse errors */ }
   });
 </script>
