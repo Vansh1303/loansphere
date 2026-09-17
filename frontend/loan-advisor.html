@@ -35,6 +35,13 @@
     .la-supportive-message { color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin: 16px 0 0; }
     @media (max-width: 640px) { .la-stat-grid { grid-template-columns: 1fr; } }
   </style>
+  <script>
+    /* Apply the saved theme before first paint to avoid a flash. */
+    (function(){try{var t=localStorage.getItem('ls_theme');
+      if(t!=='dark'&&t!=='light'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+      document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%231d4ed8'/%3E%3Cpath%20d='M11%209v13h10'%20stroke='%23fff'%20stroke-width='2.6'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='21.5'%20cy='11'%20r='2.2'%20fill='%2393c5fd'/%3E%3C/svg%3E" />
 </head>
 <body>
 <div class="ls-shell">
@@ -63,7 +70,7 @@
   <main class="ls-main">
     <div class="ls-container la-wrap">
       <h1 class="ls-page-title">Loan advisor</h1>
-      <p class="ls-page-desc" style="margin-top:-10px; margin-bottom:20px; font-size:14px; color:var(--text-secondary);">Get a transparent recommendation based on your KYC, financial profile, creditworthiness score, and estimated default risk.</p>
+      <p class="ls-page-subtitle" class="ls-page-desc" style="margin-top:-10px; margin-bottom:20px; font-size:14px; color:var(--text-secondary);">Get a transparent recommendation based on your KYC, financial profile, creditworthiness score, and estimated default risk.</p>
 
       <div id="loadingState" style="padding:40px; text-align:center; color:var(--text-secondary);"><span class="ls-spinner" style="border-top-color:var(--accent); width:24px; height:24px;"></span><p style="font-size:14px;">Checking eligibility&hellip;</p></div>
       <div id="advisorAlert" aria-live="polite"></div>

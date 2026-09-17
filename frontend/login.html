@@ -5,116 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Log in to LoanSphere — AI-powered loan agreement platform." />
   <title>Login — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="/static/css/main.css" />
-  <style>
-    body {
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      padding: 24px;
-      background: linear-gradient(135deg, #e8edf8 0%, #f0f2f8 100%);
-    }
-    .auth-card {
-      width: min(460px, 100%);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow-lg);
-      padding: 40px 36px;
-    }
-    .auth-logo {
-      font-size: 2rem;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .auth-title {
-      margin: 0 0 6px;
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-    }
-    .auth-subtitle {
-      margin: 0 0 28px;
-      color: var(--text-muted);
-      font-size: 0.93rem;
-      line-height: 1.6;
-    }
-    .auth-footer {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-    .auth-footer a {
-      color: var(--primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .auth-footer a:hover { text-decoration: underline; }
-    .auth-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 24px 0;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/auth.css" />
+  <script>
+    /* Apply the saved theme before first paint to avoid a flash. */
+    (function(){try{var t=localStorage.getItem('ls_theme');
+      if(t!=='dark'&&t!=='light'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+      document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%231d4ed8'/%3E%3Cpath%20d='M11%209v13h10'%20stroke='%23fff'%20stroke-width='2.6'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='21.5'%20cy='11'%20r='2.2'%20fill='%2393c5fd'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <div class="auth-card ls-fade-in">
-    <span class="auth-logo">⚖️</span>
-    <h1 class="auth-title">Welcome back</h1>
-    <p class="auth-subtitle">Sign in to your LoanSphere account to access all AI tools.</p>
 
-    <form id="loginForm" novalidate>
-      <div class="ls-field">
-        <label class="ls-label" for="email">Email address</label>
-        <input class="ls-input" id="email" name="email" type="email"
-               placeholder="you@example.com" autocomplete="email" required />
-      </div>
+  <!-- ══════════════ Brand panel ══════════════ -->
+  <aside class="auth-brand">
+    <a href="/login" class="auth-brand__logo">
+      <span class="auth-brand__mark"><i class="ti ti-scale"></i></span>
+      LoanSphere
+    </a>
 
-      <div class="ls-field">
-        <label class="ls-label" for="password">Password</label>
-        <input class="ls-input" id="password" name="password" type="password"
-               placeholder="Your password" autocomplete="current-password" required />
-      </div>
+    <div class="auth-brand__body">
+      <span class="auth-brand__eyebrow"><i class="ti ti-sparkles"></i> AI loan intelligence</span>
+      <h1 class="auth-brand__title">Understand any loan agreement <em>before</em> you sign it.</h1>
+      <p class="auth-brand__lede">
+        Summarize contracts, extract the clauses that actually matter, check your
+        eligibility and generate bank-ready paperwork — all in one workspace.
+      </p>
 
-      <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="loginBtn">
-        <span id="btnIcon">🔐</span>
-        <span id="btnLabel">Log In</span>
-      </button>
+      <ul class="auth-features">
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-file-search"></i></span>
+          <span>
+            <span class="auth-features__title">Clause-level analysis</span>
+            <span class="auth-features__desc">NLP extraction of interest, penalty, collateral and prepayment terms with confidence scores.</span>
+          </span>
+        </li>
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-chart-bar"></i></span>
+          <span>
+            <span class="auth-features__title">Credit &amp; risk scoring</span>
+            <span class="auth-features__desc">An ML risk model reads your financial profile and returns an explainable verdict.</span>
+          </span>
+        </li>
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-shield-check"></i></span>
+          <span>
+            <span class="auth-features__title">Verified KYC workflow</span>
+            <span class="auth-features__desc">Document checks and status tracking gate every sensitive action in the platform.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
 
-      <div id="statusMsg" aria-live="polite" style="margin-top:14px;"></div>
-    </form>
+    <div class="auth-brand__footer">
+      <div class="auth-brand__stat"><b>7</b> clause categories</div>
+      <div class="auth-brand__stat"><b>8</b> AI modules</div>
+      <div class="auth-brand__stat"><b>&lt;10s</b> average summary</div>
+    </div>
+  </aside>
 
-    <hr class="auth-divider" />
+  <!-- ══════════════ Form panel ══════════════ -->
+  <main class="auth-panel">
+    <button class="auth-theme" id="themeBtn" type="button" aria-label="Toggle dark mode">
+      <i class="ti ti-moon" id="themeIcon"></i>
+    </button>
 
-    <p class="auth-footer">
-      Don't have an account? <a href="/register">Create one for free</a>
-    </p>
-  </div>
+    <div class="auth-card">
+      <a href="/login" class="auth-card__mobile-logo">
+        <span class="ls-brand-mark"><i class="ti ti-scale"></i></span> LoanSphere
+      </a>
+
+      <h2 class="auth-card__title">Welcome back</h2>
+      <p class="auth-card__subtitle">Sign in to your account to continue where you left off.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="ls-field">
+          <label class="ls-label" for="email">Email address</label>
+          <input class="ls-input" id="email" name="email" type="email"
+                 placeholder="you@example.com" autocomplete="email" required />
+        </div>
+
+        <div class="ls-field">
+          <label class="ls-label" for="password">Password</label>
+          <div class="auth-password">
+            <input class="ls-input" id="password" name="password" type="password"
+                   placeholder="Enter your password" autocomplete="current-password" required />
+            <button class="auth-password__reveal" type="button" id="revealBtn" aria-label="Show password">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="loginBtn">
+          <span id="btnIcon" style="display:inline-flex;"><i class="ti ti-login-2"></i></span>
+          <span id="btnLabel">Sign in</span>
+        </button>
+
+        <div id="statusMsg" aria-live="polite"></div>
+      </form>
+
+      <p class="auth-card__footer">
+        New to LoanSphere? <a href="/register">Create a free account</a>
+      </p>
+
+      <p class="auth-legal">
+        By signing in you agree to LoanSphere's terms of use. This is an academic project —
+        please do not submit real financial documents.
+      </p>
+    </div>
+  </main>
 
   <script>
-    const form     = document.getElementById('loginForm');
+    const form      = document.getElementById('loginForm');
     const statusMsg = document.getElementById('statusMsg');
-    const btnIcon  = document.getElementById('btnIcon');
-    const btnLabel = document.getElementById('btnLabel');
-    const loginBtn = document.getElementById('loginBtn');
+    const btnIcon   = document.getElementById('btnIcon');
+    const btnLabel  = document.getElementById('btnLabel');
+    const loginBtn  = document.getElementById('loginBtn');
+
+    /* ---- Theme toggle ---- */
+    const themeBtn  = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    function syncThemeIcon() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+    }
+    syncThemeIcon();
+    themeBtn.addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('ls_theme', next); } catch (e) {}
+      syncThemeIcon();
+    });
+
+    /* ---- Password reveal ---- */
+    const pwInput   = document.getElementById('password');
+    const revealBtn = document.getElementById('revealBtn');
+    revealBtn.addEventListener('click', () => {
+      const show = pwInput.type === 'password';
+      pwInput.type = show ? 'text' : 'password';
+      revealBtn.innerHTML = show ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+      revealBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
 
     function setLoading(on) {
       loginBtn.disabled = on;
-      btnIcon.innerHTML = on ? '<span class="ls-spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff;"></span>' : '🔐';
-      btnLabel.textContent = on ? 'Logging in…' : 'Log In';
+      btnIcon.innerHTML = on
+        ? '<span class="ls-spinner"></span>'
+        : '<i class="ti ti-login-2"></i>';
+      btnLabel.textContent = on ? 'Signing in…' : 'Sign in';
     }
 
+    const ICONS = {
+      error:   'ti-alert-circle',
+      success: 'ti-circle-check',
+      warning: 'ti-alert-triangle',
+      info:    'ti-info-circle'
+    };
+
     function showStatus(type, msg) {
-      statusMsg.innerHTML = `<div class="ls-alert ls-alert--${type}">${msg}</div>`;
+      statusMsg.innerHTML =
+        `<div class="ls-alert ls-alert--${type}"><i class="ti ${ICONS[type] || ICONS.info}"></i><span>${msg}</span></div>`;
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusMsg.innerHTML = '';
       const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) { showStatus('error', '⚠️ Please fill in both fields.'); return; }
+      const password = pwInput.value;
+      if (!email || !password) { showStatus('error', 'Please fill in both fields.'); return; }
 
       setLoading(true);
       try {
@@ -125,14 +184,14 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          showStatus('error', `❌ ${data.msg || 'Login failed. Please check your credentials.'}`);
+          showStatus('error', data.msg || 'Login failed. Please check your credentials.');
           return;
         }
         localStorage.setItem('access_token', data.access_token);
-        showStatus('success', '✅ Login successful! Redirecting…');
+        showStatus('success', 'Signed in. Taking you to your dashboard…');
         setTimeout(() => { window.location.href = '/'; }, 700);
       } catch (err) {
-        showStatus('error', '❌ Unable to connect to the server. Please try again.');
+        showStatus('error', 'Unable to reach the server. Please try again.');
         console.error(err);
       } finally {
         setLoading(false);

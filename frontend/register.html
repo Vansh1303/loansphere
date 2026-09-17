@@ -5,120 +5,216 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Create a free LoanSphere account — AI-powered loan agreement platform." />
   <title>Create Account — LoanSphere</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/auth.css" />
   <style>
-    body {
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      padding: 24px;
-      background: linear-gradient(135deg, #e8edf8 0%, #f0f2f8 100%);
+    /* Password strength meter — only used on this page */
+    .pw-meter { display: flex; gap: 4px; margin-top: 8px; }
+    .pw-meter__bar {
+      flex: 1; height: 3px; border-radius: 100px;
+      background: var(--surface-3);
+      transition: background 220ms var(--ease);
     }
-    .auth-card {
-      width: min(460px, 100%);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow-lg);
-      padding: 40px 36px;
-    }
-    .auth-logo {
-      font-size: 2rem;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .auth-title {
-      margin: 0 0 6px;
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-    }
-    .auth-subtitle {
-      margin: 0 0 28px;
-      color: var(--text-muted);
-      font-size: 0.93rem;
-      line-height: 1.6;
-    }
-    .auth-footer {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-    .auth-footer a {
-      color: var(--primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .auth-footer a:hover { text-decoration: underline; }
-    .auth-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 24px 0;
-    }
-    .password-hint {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
+    .pw-meter__label { font-size: 11.5px; margin-top: 6px; color: var(--text-muted); }
   </style>
+  <script>
+    /* Apply the saved theme before first paint to avoid a flash. */
+    (function(){try{var t=localStorage.getItem('ls_theme');
+      if(t!=='dark'&&t!=='light'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+      document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%231d4ed8'/%3E%3Cpath%20d='M11%209v13h10'%20stroke='%23fff'%20stroke-width='2.6'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='21.5'%20cy='11'%20r='2.2'%20fill='%2393c5fd'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <div class="auth-card ls-fade-in">
-    <span class="auth-logo">⚖️</span>
-    <h1 class="auth-title">Create your account</h1>
-    <p class="auth-subtitle">Sign up for free to start generating, summarizing, and analyzing loan agreements with AI.</p>
 
-    <form id="registerForm" novalidate>
-      <div class="ls-field">
-        <label class="ls-label" for="full_name">Full Name</label>
-        <input class="ls-input" id="full_name" name="full_name" type="text"
-               placeholder="Your legal full name" autocomplete="name" required />
-      </div>
+  <!-- ══════════════ Brand panel ══════════════ -->
+  <aside class="auth-brand">
+    <a href="/login" class="auth-brand__logo">
+      <span class="auth-brand__mark"><i class="ti ti-scale"></i></span>
+      LoanSphere
+    </a>
 
-      <div class="ls-field">
-        <label class="ls-label" for="email">Email address</label>
-        <input class="ls-input" id="email" name="email" type="email"
-               placeholder="you@example.com" autocomplete="email" required />
-      </div>
+    <div class="auth-brand__body">
+      <span class="auth-brand__eyebrow"><i class="ti ti-sparkles"></i> Free to start</span>
+      <h1 class="auth-brand__title">One account. <em>Eight</em> AI modules for your loan journey.</h1>
+      <p class="auth-brand__lede">
+        From reading the fine print to getting a bank-ready application out the door —
+        LoanSphere takes you through every step with explainable AI.
+      </p>
 
-      <div class="ls-field">
-        <label class="ls-label" for="password">Password</label>
-        <input class="ls-input" id="password" name="password" type="password"
-               placeholder="Create a strong password" autocomplete="new-password" required minlength="6" />
-        <div class="password-hint">Minimum 6 characters</div>
-      </div>
+      <ul class="auth-features">
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-message-circle"></i></span>
+          <span>
+            <span class="auth-features__title">Ask your documents anything</span>
+            <span class="auth-features__desc">A retrieval-augmented chatbot answers questions in plain English, with citations.</span>
+          </span>
+        </li>
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-building-bank"></i></span>
+          <span>
+            <span class="auth-features__title">Auto-filled bank forms</span>
+            <span class="auth-features__desc">Your profile maps straight into lender-specific application forms and DOCX agreements.</span>
+          </span>
+        </li>
+        <li>
+          <span class="auth-features__icon"><i class="ti ti-scale"></i></span>
+          <span>
+            <span class="auth-features__title">A verdict you can defend</span>
+            <span class="auth-features__desc">FOIR, credit band and risk score combined into a recommendation with reasons attached.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
 
-      <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="registerBtn">
-        <span id="btnIcon">🚀</span>
-        <span id="btnLabel">Create Account</span>
-      </button>
+    <div class="auth-brand__footer">
+      <div class="auth-brand__stat"><b>Free</b> for students</div>
+      <div class="auth-brand__stat"><b>60s</b> to set up</div>
+      <div class="auth-brand__stat"><b>0</b> cards required</div>
+    </div>
+  </aside>
 
-      <div id="statusMsg" aria-live="polite" style="margin-top:14px;"></div>
-    </form>
+  <!-- ══════════════ Form panel ══════════════ -->
+  <main class="auth-panel">
+    <button class="auth-theme" id="themeBtn" type="button" aria-label="Toggle dark mode">
+      <i class="ti ti-moon" id="themeIcon"></i>
+    </button>
 
-    <hr class="auth-divider" />
+    <div class="auth-card">
+      <a href="/login" class="auth-card__mobile-logo">
+        <span class="ls-brand-mark"><i class="ti ti-scale"></i></span> LoanSphere
+      </a>
 
-    <p class="auth-footer">
-      Already have an account? <a href="/login">Log in</a>
-    </p>
-  </div>
+      <h2 class="auth-card__title">Create your account</h2>
+      <p class="auth-card__subtitle">Takes under a minute. No card, no commitment.</p>
+
+      <form id="registerForm" novalidate>
+        <div class="ls-field">
+          <label class="ls-label" for="full_name">Full name</label>
+          <input class="ls-input" id="full_name" name="full_name" type="text"
+                 placeholder="Your legal full name" autocomplete="name" required />
+        </div>
+
+        <div class="ls-field">
+          <label class="ls-label" for="email">Email address</label>
+          <input class="ls-input" id="email" name="email" type="email"
+                 placeholder="you@example.com" autocomplete="email" required />
+        </div>
+
+        <div class="ls-field">
+          <label class="ls-label" for="password">Password</label>
+          <div class="auth-password">
+            <input class="ls-input" id="password" name="password" type="password"
+                   placeholder="Create a strong password" autocomplete="new-password" required minlength="6" />
+            <button class="auth-password__reveal" type="button" id="revealBtn" aria-label="Show password">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+          <div class="pw-meter" aria-hidden="true">
+            <span class="pw-meter__bar"></span>
+            <span class="pw-meter__bar"></span>
+            <span class="pw-meter__bar"></span>
+            <span class="pw-meter__bar"></span>
+          </div>
+          <div class="pw-meter__label" id="pwLabel">Minimum 6 characters</div>
+        </div>
+
+        <button class="ls-btn ls-btn--primary ls-btn--full" type="submit" id="registerBtn">
+          <span id="btnIcon" style="display:inline-flex;"><i class="ti ti-user-plus"></i></span>
+          <span id="btnLabel">Create account</span>
+        </button>
+
+        <div id="statusMsg" aria-live="polite"></div>
+      </form>
+
+      <p class="auth-card__footer">
+        Already have an account? <a href="/login">Sign in</a>
+      </p>
+
+      <p class="auth-legal">
+        This is an academic project — please do not submit real financial documents.
+      </p>
+    </div>
+  </main>
 
   <script>
-    const form      = document.getElementById('registerForm');
-    const statusMsg = document.getElementById('statusMsg');
-    const btnIcon   = document.getElementById('btnIcon');
-    const btnLabel  = document.getElementById('btnLabel');
+    const form        = document.getElementById('registerForm');
+    const statusMsg   = document.getElementById('statusMsg');
+    const btnIcon     = document.getElementById('btnIcon');
+    const btnLabel    = document.getElementById('btnLabel');
     const registerBtn = document.getElementById('registerBtn');
+
+    /* ---- Theme toggle ---- */
+    const themeBtn  = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    function syncThemeIcon() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+    }
+    syncThemeIcon();
+    themeBtn.addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('ls_theme', next); } catch (e) {}
+      syncThemeIcon();
+    });
+
+    /* ---- Password reveal + strength ---- */
+    const pwInput   = document.getElementById('password');
+    const revealBtn = document.getElementById('revealBtn');
+    const pwBars    = document.querySelectorAll('.pw-meter__bar');
+    const pwLabel   = document.getElementById('pwLabel');
+
+    revealBtn.addEventListener('click', () => {
+      const show = pwInput.type === 'password';
+      pwInput.type = show ? 'text' : 'password';
+      revealBtn.innerHTML = show ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+      revealBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+
+    const STRENGTH = [
+      { label: 'Minimum 6 characters', color: 'var(--surface-3)' },
+      { label: 'Weak password',        color: 'var(--text-danger)' },
+      { label: 'Fair password',        color: 'var(--text-warning)' },
+      { label: 'Good password',        color: 'var(--accent)' },
+      { label: 'Strong password',      color: 'var(--text-success)' }
+    ];
+
+    pwInput.addEventListener('input', () => {
+      const v = pwInput.value;
+      let score = 0;
+      if (v.length >= 6)  score++;
+      if (v.length >= 10) score++;
+      if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+      if (/\d/.test(v) && /[^A-Za-z0-9]/.test(v)) score++;
+      if (!v) score = 0;
+
+      pwBars.forEach((bar, i) => {
+        bar.style.background = i < score ? STRENGTH[score].color : 'var(--surface-3)';
+      });
+      pwLabel.textContent = STRENGTH[score].label;
+      pwLabel.style.color = score ? STRENGTH[score].color : 'var(--text-muted)';
+    });
 
     function setLoading(on) {
       registerBtn.disabled = on;
-      btnIcon.innerHTML = on ? '<span class="ls-spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff;"></span>' : '🚀';
-      btnLabel.textContent = on ? 'Creating account…' : 'Create Account';
+      btnIcon.innerHTML = on
+        ? '<span class="ls-spinner"></span>'
+        : '<i class="ti ti-user-plus"></i>';
+      btnLabel.textContent = on ? 'Creating account…' : 'Create account';
     }
 
+    const ICONS = {
+      error:   'ti-alert-circle',
+      success: 'ti-circle-check',
+      warning: 'ti-alert-triangle',
+      info:    'ti-info-circle'
+    };
+
     function showStatus(type, msg) {
-      statusMsg.innerHTML = `<div class="ls-alert ls-alert--${type}">${msg}</div>`;
+      statusMsg.innerHTML =
+        `<div class="ls-alert ls-alert--${type}"><i class="ti ${ICONS[type] || ICONS.info}"></i><span>${msg}</span></div>`;
     }
 
     form.addEventListener('submit', async (e) => {
@@ -127,13 +223,13 @@
 
       const full_name = document.getElementById('full_name').value.trim();
       const email     = document.getElementById('email').value.trim();
-      const password  = document.getElementById('password').value;
+      const password  = pwInput.value;
 
       if (!full_name || !email || !password) {
-        showStatus('error', '⚠️ Please fill in all fields.'); return;
+        showStatus('error', 'Please fill in all fields.'); return;
       }
       if (password.length < 6) {
-        showStatus('error', '⚠️ Password must be at least 6 characters.'); return;
+        showStatus('error', 'Password must be at least 6 characters.'); return;
       }
 
       setLoading(true);
@@ -145,13 +241,13 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          showStatus('error', `❌ ${data.msg || 'Registration failed. Please try again.'}`);
+          showStatus('error', data.msg || 'Registration failed. Please try again.');
           return;
         }
-        showStatus('success', '✅ Account created! Redirecting to login…');
+        showStatus('success', 'Account created. Redirecting you to sign in…');
         setTimeout(() => { window.location.href = '/login'; }, 900);
       } catch (err) {
-        showStatus('error', '❌ Unable to connect to the server. Please try again.');
+        showStatus('error', 'Unable to reach the server. Please try again.');
         console.error(err);
       } finally {
         setLoading(false);
